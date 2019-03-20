@@ -2,10 +2,29 @@
 <html>
 	<head>
 		<title>my page!</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script>
+			
+			function doit() {
+  $.ajax({
+    type: "GET",
+    headers: { "X-AIO-Key": "6e0c16751c3c45e88745500bd58b4e4b" },
+    url: "https://io.adafruit.com/api/v2/shangdaemon/feeds/habitat/data",
+    dataType: "json",
+    processData: false
+  }).done(function(result) {
+    myData = result;
+    document.getElementById('data').innerHTML=myData[0].value;
+  });
+}
+
+		</script>
 	</head>
 	<body>
 		<h1>My first github page</h1>
 		<!-- this is my page -->
+		<input type="button" value='check adafruit data' onClick="javascript:doit();"/>
 		<p>I am so proud</p>
+		<div id="data"></div>
 	</body>
 </html>
