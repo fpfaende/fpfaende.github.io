@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏠 Notre Nouvel Appart' — Shanghai</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Georgia',serif;background:#FFF9F4;color:#2C1810;overflow-x:hidden}
+img{display:block;max-width:100%}
+:root{
+  --brick:#B05025;--rose:#F0D0C0;--cream:#FAF0E8;
+  --wood:#7A4520;--text:#2C1810;
+  --shadow:0 4px 20px rgba(44,24,16,.12);
+}
+
+/* HERO */
+#hero{
+  min-height:100vh;
+  background:linear-gradient(150deg,#FFF4EC,#F5DDD0,#EAC5AD);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:3rem 2rem;position:relative;overflow:hidden;
+}
+.hero-deco{
+  position:absolute;font-size:35vw;opacity:.05;
+  user-select:none;animation:spin 80s linear infinite;pointer-events:none;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes bob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-20px) scale(1.06)}}
+.pill{
+  display:inline-block;background:var(--brick);color:#fff;
+  padding:.35rem 1.2rem;border-radius:30px;font-size:.8rem;
+  letter-spacing:.12em;text-transform:uppercase;margin-bottom:1.5rem;
+}
+.big-emoji{font-size:6rem;animation:bob 3s ease-in-out infinite;margin-bottom:.8rem}
+h1{font-size:clamp(2.2rem,7vw,4.5rem);color:var(--brick);line-height:1.1;margin-bottom:.8rem}
+.tagline{
+  font-size:clamp(1rem,2.5vw,1.3rem);color:var(--wood);
+  margin-bottom:3rem;max-width:450px;line-height:1.65;
+}
+.cta{
+  display:inline-block;background:var(--brick);color:#fff;text-decoration:none;
+  padding:1rem 3rem;border-radius:50px;font-size:1rem;font-family:inherit;
+  box-shadow:0 6px 25px rgba(176,80,37,.35);transition:transform .25s,box-shadow .25s;
+}
+.cta:hover{transform:translateY(-4px);box-shadow:0 10px 35px rgba(176,80,37,.4)}
+
+/* NAV */
+#nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(255,249,244,.96);backdrop-filter:blur(12px);
+  border-bottom:2px solid var(--rose);padding:.6rem 1rem;
+  display:flex;gap:.4rem;overflow-x:auto;scrollbar-width:none;
+}
+#nav::-webkit-scrollbar{display:none}
+#nav a{
+  white-space:nowrap;color:var(--brick);text-decoration:none;
+  padding:.45rem 1rem;border-radius:20px;font-size:.85rem;
+  border:1.5px solid transparent;transition:all .2s;
+}
+#nav a:hover,#nav a.active{background:var(--cream);border-color:var(--rose)}
+
+/* ROOMS */
+.room{padding:5rem 2rem}
+.room.alt{background:var(--cream)}
+.room-inner{max-width:1100px;margin:0 auto}
+.room-hd{text-align:center;margin-bottom:3rem}
+.room-icon{font-size:3.5rem;display:block;margin-bottom:.4rem}
+.room-title{font-size:clamp(1.8rem,5vw,2.8rem);color:var(--brick);margin-bottom:.4rem}
+.room-desc{color:var(--wood);font-size:1rem;max-width:480px;margin:0 auto;line-height:1.65}
+
+/* GRID */
+.grid{display:grid;gap:1.2rem}
+.g1{max-width:520px;margin:0 auto}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.ga{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+@media(max-width:640px){
+  .g2,.g3,.ga{grid-template-columns:repeat(2,1fr);gap:.7rem}
+  .g2.force1{grid-template-columns:1fr}
+}
+
+/* CARD */
+.card{
+  border-radius:14px;overflow:hidden;aspect-ratio:3/4;
+  position:relative;cursor:pointer;background:var(--rose);
+  box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s;
+}
+.card:hover{transform:translateY(-6px);box-shadow:0 14px 35px rgba(176,80,37,.22)}
+.card.wide{aspect-ratio:4/3}
+.card img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.card:hover img{transform:scale(1.06)}
+.cap{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:2rem .9rem .8rem;
+  background:linear-gradient(transparent,rgba(12,4,0,.82));
+  color:#fff;font-size:.78rem;line-height:1.4;
+  opacity:0;transition:opacity .3s;
+}
+.card:hover .cap{opacity:1}
+@media(hover:none){
+  .cap{opacity:1;padding:1.2rem .6rem .5rem;font-size:.72rem}
+}
+
+/* TREASURE HUNT */
+#hunt{
+  padding:5rem 2rem;
+  background:linear-gradient(135deg,var(--brick),var(--wood));
+  color:#fff;text-align:center;
+}
+#hunt h2{font-size:clamp(1.6rem,5vw,2.4rem);margin-bottom:.5rem}
+.hunt-sub{opacity:.85;margin-bottom:2.5rem;font-size:.95rem}
+.hunt-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));
+  gap:1rem;max-width:850px;margin:0 auto;
+}
+.hcard{
+  background:rgba(255,255,255,.12);border-radius:12px;
+  padding:1.4rem .8rem;transition:background .2s;
+}
+.hcard:hover{background:rgba(255,255,255,.22)}
+.hcard .e{font-size:2.2rem}
+.hcard p{margin-top:.4rem;font-size:.82rem;opacity:.9;line-height:1.35}
+
+/* FOOTER */
+footer{
+  text-align:center;padding:4rem 2rem;color:var(--wood);
+  border-top:2px solid var(--rose);
+}
+footer .hearts{font-size:2.5rem;margin-bottom:.6rem}
+footer h3{font-size:1.4rem;color:var(--brick);margin-bottom:.4rem}
+footer p{line-height:1.7;font-size:.95rem}
+
+/* LIGHTBOX */
+#lb{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);
+  z-index:999;flex-direction:column;align-items:center;justify-content:center;
+}
+#lb.on{display:flex}
+#lb-close{
+  position:absolute;top:1rem;right:1.5rem;
+  background:rgba(255,255,255,.15);border:none;color:#fff;
+  font-size:1.4rem;width:44px;height:44px;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:background .2s;
+}
+#lb-close:hover{background:rgba(255,255,255,.3)}
+#lb-count{
+  position:absolute;top:1.1rem;left:50%;transform:translateX(-50%);
+  color:rgba(255,255,255,.5);font-size:.8rem;
+}
+#lb-wrap{position:relative;display:flex;align-items:center;gap:.5rem;max-width:92vw}
+#lb-img{max-width:88vw;max-height:82vh;object-fit:contain;border-radius:10px}
+#lb-prev,#lb-next{
+  background:rgba(255,255,255,.15);border:none;color:#fff;
+  font-size:1.8rem;width:46px;height:46px;border-radius:50%;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:background .2s;
+}
+#lb-prev:hover,#lb-next:hover{background:rgba(255,255,255,.3)}
+#lb-cap{
+  color:rgba(255,255,255,.78);font-size:.85rem;text-align:center;
+  margin-top:.9rem;padding:0 1rem;max-width:580px;line-height:1.5;
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-deco">🏠</div>
+  <div class="pill">🇫🇷 Shanghai &middot; 上海 &middot; 2026</div>
+  <div class="big-emoji">🏠</div>
+  <h1>Notre Nouvel Appart'&nbsp;!</h1>
+  <p class="tagline">On a trouvé une maison pleine de charme à Shanghai. Venez découvrir toutes les pièces&nbsp;!</p>
+  <a href="#nav" class="cta">✨ Commencer la visite</a>
+</section>
+
+<!-- STICKY NAV -->
+<nav id="nav">
+  <a href="#entree">🚪 Entrée</a>
+  <a href="#salon">🛋️ Salon</a>
+  <a href="#bureau">✏️ Bureau</a>
+  <a href="#cuisine">🍳 Cuisine</a>
+  <a href="#chambre">🛏️ Chambre</a>
+  <a href="#wc">🐱 WC</a>
+  <a href="#douche">🚿 Douche</a>
+  <a href="#hunt">🔍 Trésors</a>
+</nav>
+
+<!-- ENTRÉE -->
+<section class="room" id="entree">
+  <div class="room-inner">
+    <div class="room-hd">
+      <span class="room-icon">🚪</span>
+      <h2 class="room-title">L'Entrée</h2>
+      <p class="room-desc">La première chose qu'on voit en arrivant — une vieille porte bleue et un couloir avec de jolis carreaux colorés !</p>
+    </div>
+    <div class="grid g2">
+      <div class="card" onclick="lb('entree',0)">
+        <img src="images/img18.jpg" loading="lazy" alt="Couloir d'entrée">
+        <div class="cap">🚪 La vieille porte bleue et les carreaux colorés du couloir</div>
+      </div>
+      <div class="card" onclick="lb('entree',1)">
+        <img src="images/img20.jpg" loading="lazy" alt="Espace entrée">
+        <div class="cap">💄 La coiffeuse près de l'entrée du salon</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SALON & MUSIQUE -->
+<section class="room alt" id="salon">
+  <div class="room-inner">
+    <div class="room-hd">
+      <span class="room-icon">🛋️</span>
+      <h2 class="room-title">Le Salon &amp; l'Espace Musique</h2>
+      <p class="room-desc">Un grand canapé rose tout doux... et une petite pièce secrète avec un instrument mystérieux ! Savez-vous ce que c'est ? 🥁</p>
+    </div>
+    <div class="grid g1">
+      <div class="card wide" onclick="lb('salon',0)">
+        <img src="images/img19.jpg" loading="lazy" alt="Salon et espace musique">
+        <div class="cap">🎶 Un handpan (instrument de percussion venu d'Inde) et un coin pour se reposer — qui veut apprendre ?</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUREAU -->
+<section class="room" id="bureau">
+  <div class="room-inner">
+    <div class="room-hd">
+      <span class="room-icon">✏️</span>
+      <h2 class="room-title">Le Bureau &amp; le Grand Espace</h2>
+      <p class="room-desc">Un très grand salon avec des poutres en bois au plafond — ce sont les vraies poutres d'origine de la maison ! Et un bureau pour travailler (ou faire ses devoirs 📚).</p>
+    </div>
+    <div class="grid ga">
+      <div class="card wide" onclick="lb('bureau',0)">
+        <img src="images/img13.jpg" loading="lazy" alt="Grand salon">
+        <div class="cap">🏛️ Le grand salon — les poutres en bois ont peut-être 100 ans !</div>
+      </div>
+      <div class="card wide" onclick="lb('bureau',1)">
+        <img src="images/img16.jpg" loading="lazy" alt="Vue ouverte">
+        <div class="cap">📚 Le bureau avec les étagères pleines de livres et d'objets</div>
+      </div>
+      <div class="card wide" onclick="lb('bureau',2)">
+        <img src="images/img17.jpg" loading="lazy" alt="Vue vers chambre">
+        <div class="cap">👀 La vue depuis le salon vers la chambre — tout est ouvert !</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CUISINE -->
+<section class="room alt" id="cuisine">
+  <div class="room-inner">
+    <div class="room-hd">
+      <span class="room-icon">🍳</span>
+      <h2 class="room-title">La Cuisine</h2>
+      <p class="room-desc">Une cuisine avec un bar en briques rouges et des murs en blocs de verre ! On pourra cuisiner ensemble des crêpes ET des raviolis chinois 🥟.</p>
+    </div>
+    <div class="grid ga">
+      <div class="card wide" onclick="lb('cuisine',0)">
+        <img src="images/img15.jpg" loading="lazy" alt="Cuisine intérieure">
+        <div class="cap">🧱 Les blocs de verre laissent passer la lumière — très élégant !</div>
+      </div>
+      <div class="card wide" onclick="lb('cuisine',1)">
+        <img src="images/img14.jpg" loading="lazy" alt="Bar cuisine">
+        <div class="cap">🍽️ Le bar en briques rouges — on mange ici comme au restaurant !</div>
+      </div>
+      <div class="card wide" onclick="lb('cuisine',2)">
+        <img src="images/img01.jpg" loading="lazy" alt="Vue cuisine">
+        <div class="cap">🪟 La cuisine vue depuis le salon, avec le grand ventilateur au plafond</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAMBRE -->
+<section class="room" id="chambre">
+  <div class="room-inner">
+    <div class="room-hd">
+      <span class="room-icon">🛏️</span>
+      <h2 class="room-title">La Chambre</h2>
+      <p class="room-desc">Un grand lit sur une plateforme avec des tiroirs en dessous pour ranger des tas de choses ! Et il y a aussi une petite échelle mystérieuse... 🪜</p>
+    </div>
+    <div class="grid ga">
+      <div class="card" onclick="lb('chambre',0)">
+        <img src="images/img02.jpg" loading="lazy" alt="Chambre principale">
+        <div class="cap">🛏️ Le lit douillet avec sa belle lampe en rotin tressé</div>
+      </div>
+      <div class="card" onclick="lb('chambre',1)">
+        <img src="images/img09.jpg" loading="lazy" alt="Côté chambre">
+        <div class="cap">💪 La table de nuit — et une kettlebell rose pour faire du sport !</div>
+      </div>
+      <div class="card" onclick="lb('chambre',2)">
+        <img src="images/img03.jpg" loading="lazy" alt="Entrée chambre avec échelle">
+        <div class="cap">🪜 L'échelle mystérieuse à l'entrée de la chambre — où mène-t-elle ?</div>
+      </div>
+      <div class="card" onclick="lb('chambre',3)">
+        <img src="images/img10.jpg" loading="lazy" alt="Chambre double fenêtre">
+        <div class="cap">🌤️ Deux fenêtres avec une belle vue sur les toits de Shanghai</div>
+      </div>
+      <div class="card" onclick="lb('chambre',4)">
+        <img src="images/img06.jpg" loading="lazy" alt="Chambre avec clim">
+        <div class="cap">❄️ La climatisation réglée à 28° — il fait vraiment chaud à Shanghai en été !</div>
+      </div>
+      <div class="card" onclick="lb('chambre',5)">
+        <img src="images/img05.jpg" loading="lazy" alt="Grand miroir panoramique">
+        <div class="cap">🪞 Papa dans le grand miroir — et on voit tout l'appartement derrière !</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WC -->
+<section class="room alt" id="wc">
+  <div class="room-inner">
+    <div class="room-hd">
+      <span class="room-icon">🐱</span>
+      <h2 class="room-title">Les Toilettes</h2>
+      <p class="room-desc">Des toilettes séparées avec un poster très très spécial... un chat qui lit sur les toilettes ! 😸 Qui s'y reconnaît ?</p>
+    </div>
+    <div class="grid g3">
+      <div class="card" onclick="lb('wc',0)">
+        <img src="images/img07.jpg" loading="lazy" alt="WC avec poster chat">
+        <div class="cap">😸 Le fameux poster du chat lecteur — un grand philosophe !</div>
+      </div>
+      <div class="card" onclick="lb('wc',1)">
+        <img src="images/img04.jpg" loading="lazy" alt="Porte WC">
+        <div class="cap">🪟 La porte avec verre strié — lumière ET intimité !</div>
+      </div>
+      <div class="card" onclick="lb('wc',2)">
+        <img src="images/img08.jpg" loading="lazy" alt="Étagère WC">
+        <div class="cap">🔆 Les jolies étagères en bois clair</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOUCHE -->
+<section class="room" id="douche">
+  <div class="room-inner">
+    <div class="room-hd">
+      <span class="room-icon">🚿</span>
+      <h2 class="room-title">La Douche &amp; la Buanderie</h2>
+      <p class="room-desc">Une pièce qui fait à la fois douche ET buanderie — avec machine à laver et un joli rideau avec des feuilles tropicales !</p>
+    </div>
+    <div class="grid g2">
+      <div class="card" onclick="lb('douche',0)">
+        <img src="images/img11.jpg" loading="lazy" alt="Douche intérieur">
+        <div class="cap">🌿 Le rideau de douche avec des feuilles — comme dans une jungle !</div>
+      </div>
+      <div class="card" onclick="lb('douche',1)">
+        <img src="images/img12.jpg" loading="lazy" alt="Entrée douche">
+        <div class="cap">🚿 La salle de bain vue depuis le couloir</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TREASURE HUNT -->
+<section id="hunt">
+  <h2>🔍 La Chasse aux Trésors !</h2>
+  <p class="hunt-sub">Regardez bien toutes les photos — avez-vous trouvé ces 8 choses cachées ?</p>
+  <div class="hunt-grid">
+    <div class="hcard"><div class="e">🐱</div><p>Un chat qui lit sur les toilettes</p></div>
+    <div class="hcard"><div class="e">🥁</div><p>Un handpan dans le salon musique</p></div>
+    <div class="hcard"><div class="e">💪</div><p>Une kettlebell rose dans la chambre</p></div>
+    <div class="hcard"><div class="e">🧱</div><p>Des briques rouges dans la cuisine</p></div>
+    <div class="hcard"><div class="e">🪜</div><p>Une échelle mystérieuse — vers où ?</p></div>
+    <div class="hcard"><div class="e">🌱</div><p>Des plantes vertes partout !</p></div>
+    <div class="hcard"><div class="e">🏡</div><p>Les toits de Shanghai par la fenêtre</p></div>
+    <div class="hcard"><div class="e">🪞</div><p>Papa dans le grand miroir !</p></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="hearts">🏠</div>
+  <h3>Notre Chez-Nous à Shanghai</h3>
+  <p>On a tellement hâte de vous accueillir ici&nbsp;! 🥰</p>
+  <p style="margin-top:.5rem;font-size:.8rem;opacity:.55">上海 &middot; 2026</p>
+</footer>
+
+<!-- LIGHTBOX -->
+<div id="lb">
+  <button id="lb-close" onclick="closeLb()" title="Fermer (Échap)">✕</button>
+  <div id="lb-count"></div>
+  <div id="lb-wrap">
+    <button id="lb-prev" onclick="navLb(-1)">‹</button>
+    <img id="lb-img" src="" alt="">
+    <button id="lb-next" onclick="navLb(1)">›</button>
+  </div>
+  <div id="lb-cap"></div>
+</div>
+
+<script>
+const G={
+  entree:[
+    {s:'images/img18.jpg',c:'🚪 La vieille porte bleue et les carreaux colorés du couloir'},
+    {s:'images/img20.jpg',c:'💄 La coiffeuse près de l'entrée du salon'},
+  ],
+  salon:[
+    {s:'images/img19.jpg',c:'🎶 Le handpan et le coin lecture confortable du salon'},
+  ],
+  bureau:[
+    {s:'images/img13.jpg',c:'🏛️ Le grand salon — les poutres en bois ont peut-être 100 ans !'},
+    {s:'images/img16.jpg',c:'📚 Le bureau avec les étagères et la vue sur la chambre'},
+    {s:'images/img17.jpg',c:'👀 La vue depuis le salon vers la chambre — tout est ouvert !'},
+  ],
+  cuisine:[
+    {s:'images/img15.jpg',c:'🧱 La cuisine avec ses blocs de verre — très élégant !'},
+    {s:'images/img14.jpg',c:'🍽️ Le bar en briques rouges — comme au restaurant !'},
+    {s:'images/img01.jpg',c:'🪟 La cuisine vue depuis le salon, avec le ventilateur au plafond'},
+  ],
+  chambre:[
+    {s:'images/img02.jpg',c:'🛏️ Le grand lit douillet avec sa lampe en rotin'},
+    {s:'images/img09.jpg',c:'💪 La table de nuit et la kettlebell rose pour le sport !'},
+    {s:'images/img03.jpg',c:'🪜 L'entrée de la chambre avec l'échelle mystérieuse'},
+    {s:'images/img10.jpg',c:'🌤️ Deux fenêtres avec vue sur les toits de Shanghai'},
+    {s:'images/img06.jpg',c:'❄️ La climatisation à 28° — il fait chaud à Shanghai en été !'},
+    {s:'images/img05.jpg',c:'🪞 Papa dans le grand miroir — et on voit tout l'appartement !'},
+  ],
+  wc:[
+    {s:'images/img07.jpg',c:'😸 Le fameux poster du chat lecteur — qui s'y reconnaît ?'},
+    {s:'images/img04.jpg',c:'🪟 La porte avec verre strié — lumière et intimité !'},
+    {s:'images/img08.jpg',c:'🔆 Les jolies étagères en bois clair'},
+  ],
+  douche:[
+    {s:'images/img11.jpg',c:'🌿 La douche tropicale et la machine à laver'},
+    {s:'images/img12.jpg',c:'🚿 La salle de bain vue depuis le couloir'},
+  ],
+};
+
+let cg=null,ci=0;
+
+function lb(g,i){cg=g;ci=i;upd();document.getElementById('lb').classList.add('on');document.body.style.overflow='hidden';}
+function upd(){
+  const d=G[cg][ci];
+  document.getElementById('lb-img').src=d.s;
+  document.getElementById('lb-cap').textContent=d.c;
+  document.getElementById('lb-count').textContent=(ci+1)+' / '+G[cg].length;
+}
+function closeLb(){document.getElementById('lb').classList.remove('on');document.body.style.overflow='';}
+function navLb(dir){const n=G[cg].length;ci=(ci+dir+n)%n;upd();}
+
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lb').classList.contains('on'))return;
+  if(e.key==='ArrowRight')navLb(1);
+  if(e.key==='ArrowLeft')navLb(-1);
+  if(e.key==='Escape')closeLb();
+});
+document.getElementById('lb').addEventListener('click',e=>{if(e.target.id==='lb')closeLb();});
+
+// Smooth scroll
+document.querySelectorAll('#nav a').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+
+// Active nav highlight
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){
+      const id='#'+en.target.id;
+      document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('active',a.getAttribute('href')===id));
+    }
+  });
+},{threshold:0.2,rootMargin:'-60px 0px 0px 0px'});
+document.querySelectorAll('section[id],nav[id]').forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
