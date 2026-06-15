@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🏠 Visite 3D — Notre Appart' Shanghai</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body,html{width:100%;height:100%;overflow:hidden;background:#0a0604;font-family:Georgia,serif;user-select:none}
+canvas{position:fixed;inset:0}
+
+#loading{position:fixed;inset:0;z-index:100;background:#0a0604;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:#e0c8a8;gap:1rem}
+.big-e{font-size:4rem;animation:bob 2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+#ld-bar{width:240px;height:3px;background:rgba(255,255,255,.12);border-radius:2px}
+#ld-fill{height:100%;background:#B05025;border-radius:2px;width:0%;transition:width .3s}
+#ld-txt{font-size:.74rem;opacity:.4;letter-spacing:.05em}
+
+#fade{position:fixed;inset:0;z-index:50;background:#0a0604;opacity:1;pointer-events:none;transition:opacity .35s ease}
+
+#room-ui{position:fixed;top:0;left:0;right:0;z-index:20;
+  background:linear-gradient(rgba(10,6,4,.88) 0%,transparent 100%);
+  padding:1.4rem 1.8rem 4rem;display:none;pointer-events:none}
+#rn{font-size:1.5rem;color:#ecd4b0;text-shadow:0 2px 10px rgba(0,0,0,.9)}
+#rd{font-size:.8rem;color:rgba(236,212,176,.5);margin-top:.22rem}
+
+#nav-ui{position:fixed;bottom:0;left:0;right:0;z-index:20;
+  background:linear-gradient(transparent,rgba(10,6,4,.88));
+  padding:4rem 1.5rem 1.8rem;display:none;
+  flex-direction:column;align-items:center;gap:.85rem}
+.nrow{display:flex;align-items:center;gap:1rem}
+.nbtn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+  color:#ecd4b0;padding:.6rem 1.4rem;border-radius:25px;
+  cursor:pointer;font-family:inherit;font-size:.85rem;
+  backdrop-filter:blur(8px);transition:all .2s;white-space:nowrap}
+.nbtn:hover{background:rgba(255,255,255,.2)}
+.nbtn:disabled{opacity:.22;cursor:not-allowed}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.22);
+  cursor:pointer;transition:all .22s;display:inline-block;margin:0 3px}
+.dot.on{background:#B05025;transform:scale(1.35)}
+.dot:hover{background:rgba(255,255,255,.5)}
+
+#dots{display:flex;align-items:center}
+
+#home-a{position:fixed;top:1.2rem;right:1.4rem;z-index:25;display:none;
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);
+  color:#ecd4b0;padding:.5rem 1rem;border-radius:18px;
+  text-decoration:none;font-size:.78rem;backdrop-filter:blur(8px);transition:background .2s}
+#home-a:hover{background:rgba(255,255,255,.18)}
+
+#hint{position:fixed;bottom:115px;left:50%;transform:translateX(-50%);
+  color:rgba(236,212,176,.38);font-size:.75rem;pointer-events:none;z-index:5;
+  text-align:center;animation:hfade 6s 1.5s forwards;white-space:nowrap}
+@keyframes hfade{0%{opacity:1}75%{opacity:1}100%{opacity:0}}
+
+#look-arrows{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  pointer-events:none;z-index:5;opacity:0;transition:opacity .5s}
+#look-arrows.show{opacity:1}
+.arr{font-size:1.4rem;color:rgba(236,212,176,.22);position:absolute}
+.arr.u{top:-40px;left:50%;transform:translateX(-50%)}
+.arr.d{bottom:-40px;left:50%;transform:translateX(-50%)}
+.arr.l{left:-50px;top:50%;transform:translateY(-50%)}
+.arr.r{right:-50px;top:50%;transform:translateY(-50%)}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="big-e">🏠</div>
+  <div style="font-size:1.1rem">Chargement de l'appartement...</div>
+  <div id="ld-bar"><div id="ld-fill"></div></div>
+  <div id="ld-txt">Préparation du tour virtuel 3D</div>
+</div>
+
+<div id="fade"></div>
+
+<div id="room-ui">
+  <div id="rn"></div>
+  <div id="rd"></div>
+</div>
+
+<div id="nav-ui">
+  <div class="nrow">
+    <button class="nbtn" id="bp" onclick="go(-1)">‹ Précédent</button>
+    <div id="dots"></div>
+    <button class="nbtn" id="bn" onclick="go(1)">Suivant ›</button>
+  </div>
+</div>
+
+<div id="hint">🖱️ Cliquez et glissez pour regarder autour de vous &nbsp;|&nbsp; ← → pour naviguer</div>
+<a href="index.html" id="home-a">🏠 Retour aux photos</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ─── TOUR DATA ───────────────────────────────────────────
+const TOUR = [
+  { name:'🚪 L\'Entrée',
+    desc:'La vieille porte bleue et les carreaux colorés du couloir',
+    size:[5,2.8,4], bg:0x0e0906,
+    photos:{ front:'images/img18.jpg', right:'images/img20.jpg' } },
+
+  { name:'🛋️ Salon & Espace Musique',
+    desc:'Le canapé rose et le handpan mystérieux — saurez-vous identifier l\'instrument ?',
+    size:[8,3,6], bg:0x0d0a06,
+    photos:{ front:'images/img19.jpg', right:'images/img20.jpg' } },
+
+  { name:'✏️ Bureau & Grand Salon',
+    desc:'Les poutres centenaires et les hauts plafonds — regardez en haut !',
+    size:[10,4.5,8], bg:0x0f0b06,
+    photos:{ front:'images/img13.jpg', left:'images/img16.jpg', right:'images/img17.jpg' } },
+
+  { name:'🛏️ La Chambre',
+    desc:'Le lit douillet sur sa plateforme et l\'échelle mystérieuse...',
+    size:[7,3.5,6], bg:0x100c08,
+    photos:{ front:'images/img02.jpg', left:'images/img10.jpg', right:'images/img09.jpg', back:'images/img05.jpg' } },
+
+  { name:'🍳 La Cuisine',
+    desc:'L\'arche en briques rouges et les murs en blocs de verre',
+    size:[6,3,5], bg:0x0c0907,
+    photos:{ front:'images/img15.jpg', left:'images/img14.jpg', right:'images/img01.jpg' } },
+
+  { name:'🐱 Les Toilettes',
+    desc:'Le célèbre chat lecteur vous accueille ! 😸',
+    size:[3.5,2.8,3], bg:0x0c0c0b,
+    photos:{ front:'images/img07.jpg', left:'images/img04.jpg', right:'images/img08.jpg' } },
+
+  { name:'🚿 Douche & Buanderie',
+    desc:'La douche à feuilles tropicales et la machine à laver',
+    size:[3.5,2.8,3], bg:0x080d0b,
+    photos:{ front:'images/img11.jpg', right:'images/img12.jpg' } }
+];
+
+// ─── THREE.JS SETUP ──────────────────────────────────────
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth,innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const cam = new THREE.PerspectiveCamera(80, innerWidth/innerHeight, 0.05, 200);
+
+window.addEventListener('resize',()=>{
+  cam.aspect = innerWidth/innerHeight;
+  cam.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+});
+
+// ─── TEXTURE LOADING ─────────────────────────────────────
+const TC = {}, TL = new THREE.TextureLoader();
+let nL = 0;
+const ALL = [...new Set(TOUR.flatMap(r=>Object.values(r.photos)))];
+const NT = ALL.length;
+
+function loadAll(cb){
+  ALL.forEach(u=>{
+    TL.load(u, tex=>{
+      tex.encoding = THREE.sRGBEncoding;
+      TC[u] = tex;
+      nL++;
+      const pct = (nL/NT*100).toFixed(0);
+      document.getElementById('ld-fill').style.width = pct+'%';
+      document.getElementById('ld-txt').textContent = nL+'/'+NT+' photos chargées';
+      if(nL===NT) cb();
+    }, undefined, ()=>{ nL++; if(nL===NT) cb(); });
+  });
+}
+
+// ─── BUILD ROOM ──────────────────────────────────────────
+// Three.js geometry conventions (camera looks down -Z by default):
+//   front wall = at z=-D/2, photo plane faces +z (rotation.y=0)    ← camera sees this
+//   back  wall = at z=+D/2, photo plane faces -z (rotation.y=PI)   ← turn 180° to see
+//   left  wall = at x=-W/2, photo plane faces +x (rotation.y=PI/2) ← turn left
+//   right wall = at x=+W/2, photo plane faces -x (rotation.y=-PI/2)← turn right
+
+function buildRoom(d){
+  const g = new THREE.Group();
+  const [W,H,De] = d.size;
+
+  // Shell (inside face of box)
+  g.add(new THREE.Mesh(
+    new THREE.BoxGeometry(W,H,De),
+    new THREE.MeshBasicMaterial({color:d.bg||0x100a06, side:THREE.BackSide})
+  ));
+
+  // Floor depth-cue grid
+  const fl = new THREE.Mesh(
+    new THREE.PlaneGeometry(W*.94,De*.94,6,6),
+    new THREE.MeshBasicMaterial({color:0x5a3415,wireframe:true,transparent:true,opacity:.09})
+  );
+  fl.rotation.x = -Math.PI/2;
+  fl.position.y = -H/2+.02;
+  g.add(fl);
+
+  // Photo planes — fill wall height, portrait AR = 0.75
+  const pH = H, pW = H*0.75;
+
+  function addP(side, url){
+    if(!url||!TC[url]) return;
+    const m = new THREE.Mesh(
+      new THREE.PlaneGeometry(pW, pH),
+      new THREE.MeshBasicMaterial({map:TC[url], side:THREE.DoubleSide})
+    );
+    switch(side){
+      case 'front': m.position.set(0,0,-De/2+.06); m.rotation.y=0;         break;
+      case 'back':  m.position.set(0,0, De/2-.06); m.rotation.y=Math.PI;   break;
+      case 'left':  m.position.set(-W/2+.06,0,0);  m.rotation.y=Math.PI/2; break;
+      case 'right': m.position.set( W/2-.06,0,0);  m.rotation.y=-Math.PI/2;break;
+    }
+    g.add(m);
+  }
+
+  Object.entries(d.photos).forEach(([s,u])=>addP(s,u));
+  return g;
+}
+
+// ─── TOUR STATE ──────────────────────────────────────────
+let cur=0, rg=null, busy=false;
+let yaw=0, pitch=0, drag=false, lx=0, ly=0;
+const fade = document.getElementById('fade');
+
+function showRoom(idx){
+  if(busy) return;
+  busy=true;
+  cur = ((idx%TOUR.length)+TOUR.length)%TOUR.length;
+  fade.style.opacity=1;
+
+  setTimeout(()=>{
+    if(rg){ scene.remove(rg); rg=null; }
+    const d = TOUR[cur];
+    rg = buildRoom(d);
+    scene.add(rg);
+    scene.background = new THREE.Color(d.bg);
+
+    // Eye-level camera inside room
+    const [W,H,De]=d.size;
+    cam.position.set(0, -H/2+1.72, 0.3);
+    yaw=0; pitch=0;
+    cam.rotation.order='YXZ';
+    cam.rotation.y=0; cam.rotation.x=0;
+
+    // UI
+    document.getElementById('rn').textContent = d.name;
+    document.getElementById('rd').textContent = d.desc;
+    document.querySelectorAll('.dot').forEach((dot,i)=>dot.classList.toggle('on',i===cur));
+    document.getElementById('bp').disabled = cur===0;
+    document.getElementById('bn').disabled = cur===TOUR.length-1;
+
+    fade.style.opacity=0;
+    setTimeout(()=>{ busy=false; },380);
+  },360);
+}
+
+function go(dir){
+  const ni=cur+dir;
+  if(ni<0||ni>=TOUR.length) return;
+  showRoom(ni);
+}
+
+// ─── CONTROLS ────────────────────────────────────────────
+const el=renderer.domElement;
+
+el.addEventListener('mousedown',e=>{drag=true;lx=e.clientX;ly=e.clientY;});
+window.addEventListener('mousemove',e=>{
+  if(!drag) return;
+  yaw  -= (e.clientX-lx)*.0028;
+  pitch -= (e.clientY-ly)*.0028;
+  pitch = Math.max(-Math.PI*.44, Math.min(Math.PI*.44, pitch));
+  cam.rotation.order='YXZ';
+  cam.rotation.y=yaw; cam.rotation.x=pitch;
+  lx=e.clientX; ly=e.clientY;
+});
+window.addEventListener('mouseup',()=>drag=false);
+
+let lt={x:0,y:0};
+el.addEventListener('touchstart',e=>{ const t=e.touches[0]; lt={x:t.clientX,y:t.clientY}; drag=true; },{passive:true});
+el.addEventListener('touchmove',e=>{
+  if(!drag)return; e.preventDefault();
+  const t=e.touches[0];
+  yaw  -= (t.clientX-lt.x)*.004;
+  pitch -= (t.clientY-lt.y)*.004;
+  pitch = Math.max(-Math.PI*.44, Math.min(Math.PI*.44, pitch));
+  cam.rotation.order='YXZ';
+  cam.rotation.y=yaw; cam.rotation.x=pitch;
+  lt={x:t.clientX,y:t.clientY};
+},{passive:false});
+el.addEventListener('touchend',()=>drag=false,{passive:true});
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='d') go(1);
+  if(e.key==='ArrowLeft' ||e.key==='a') go(-1);
+  if(e.key==='ArrowUp')   { pitch=Math.max(-Math.PI*.44,pitch-.08); cam.rotation.x=pitch; }
+  if(e.key==='ArrowDown') { pitch=Math.min( Math.PI*.44,pitch+.08); cam.rotation.x=pitch; }
+});
+
+// ─── RENDER LOOP ─────────────────────────────────────────
+(function animate(){ requestAnimationFrame(animate); renderer.render(scene,cam); })();
+
+// ─── INIT ────────────────────────────────────────────────
+// Build navigation dots
+const dotsEl=document.getElementById('dots');
+TOUR.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' on':'');
+  d.title=TOUR[i].name;
+  d.onclick=()=>showRoom(i);
+  dotsEl.appendChild(d);
+});
+
+loadAll(()=>{
+  document.getElementById('loading').style.display='none';
+  document.getElementById('room-ui').style.display='block';
+  document.getElementById('nav-ui').style.display='flex';
+  document.getElementById('home-a').style.display='block';
+  showRoom(0);
+});
+</script>
+</body>
+</html>
